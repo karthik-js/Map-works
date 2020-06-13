@@ -56,3 +56,11 @@ export const getLocations = async () => {
         console.error('error fetching locations', error);
     }
 };
+
+export const addLocation = async (data) => {
+    try {
+        const loc = await firestore.collection('locations').add(data);
+    } catch (error) {
+        console.error('error adding locations', error);
+    }
+};

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, memo} from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
@@ -7,8 +7,10 @@ import Map from './map-utils/MapContainer';
 import {auth} from 'firebase-utils';
 import {MapsWrapper} from './styles';
 import AddLocation from './AddLocation';
+import usePosition from 'providers/UsePosition';
 
 const Home = () => {
+    const currPos = usePosition();
     const [show, setShow] = useState(false);
 
     const handleSignout = () => {
@@ -39,7 +41,7 @@ const Home = () => {
                 <div className='d-flex'>
                     <Locations />
                     <MapsWrapper>
-                        <Map />
+                        <Map currPos={currPos} height='450px' />
                     </MapsWrapper>
                 </div>
             </div>
@@ -49,4 +51,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default memo(Home);

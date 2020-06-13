@@ -26,17 +26,22 @@ const Locations = () => {
             <CardColumns>
                 {locations.current &&
                     locations.current.map(
-                        ({name, description, lat, lng, active}) => {
+                        ({name, description, lat, lng, active}, index) => {
                             return (
-                                <Card >
+                                <Card key={index} border={active && 'primary'}>
                                     <Card.Body>
                                         <Card.Title>{name}</Card.Title>
                                         <Card.Text>{description}</Card.Text>
-                                        <Card.Text>lat: {lat}</Card.Text>
-                                        <Card.Text>long: {lng}</Card.Text>
+                                        <Card.Text>lat: {parseFloat(lat).toFixed(3)}</Card.Text>
+                                        <Card.Text>lng: {parseFloat(lng).toFixed(3)}</Card.Text>
                                     </Card.Body>
-                                    <Card.Footer>
-                                        <Button variant='primary' className="float-right">View</Button>
+                                    <Card.Footer className='p-0'>
+                                        <Button
+                                            variant='primary'
+                                            className='float-right m-2'
+                                        >
+                                            View
+                                        </Button>
                                     </Card.Footer>
                                 </Card>
                             );

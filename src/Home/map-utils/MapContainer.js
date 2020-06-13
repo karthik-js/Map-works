@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback} from 'react';
 import {
     GoogleMap,
     useLoadScript,
@@ -6,10 +6,6 @@ import {
     InfoWindow,
 } from '@react-google-maps/api';
 import mapStyles from './mapStyles';
-
-const containerStyle = {
-    height: '450px',
-};
 
 const center = {
     lat: 17.46221,
@@ -23,34 +19,37 @@ const options = {
 };
 const libraries = ['places'];
 
-const MapContainer = () => {
+const MapContainer = ({currPos, height, markers, onMapClick}) => {
+    const [selected, setSelected] = useState(null);
+
     const {isLoaded, loadError} = useLoadScript({
         googleMapsApiKey: 'AIzaSyC8ZNCv7s7ncj604eU3WX5zQKqb7DhyUEk',
         libraries,
     });
-
-    const [marker, setMarker] = useState([]);
-
-    const handleMapClick = useCallback((event) => {
-      setMarker({
-            lat: event.latLng.lat(),
-            lng: event.latLng.lng(),
-        });
-    }, []);
 
     if (!isLoaded) return 'Maps Loading';
     if (loadError) return 'Error Loading Maps';
 
     return (
         <GoogleMap
-            mapContainerStyle={containerStyle}
+            mapContainerStyle={{
+                height,
+            }}
             center={center}
             zoom={15}
             options={options}
-            onClick={handleMapClick}
+            onClick={onMapClick}
         >
-            {/* Child components, such as markers, info windows, etc. */}
-            <></>
+            {markers &&
+                markers.map((marker, index) => {
+                    return (
+                        <Marker
+                            key={index}
+                            position={{lat: marker.lat, lng: marker.lng}}
+                            onClick={() => setSelected(marker)}
+                        />
+                    );
+                })}
         </GoogleMap>
     );
 };

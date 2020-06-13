@@ -22,29 +22,37 @@ export const generateUserDocument = async (user, additionalData) => {
     const userRef = firestore.doc(`users/${user.uid}`);
     const snapshot = await userRef.get();
     if (!snapshot.exists) {
-      const { email, displayName, photoURL } = user;
-      try {
-        await userRef.set({
-          displayName,
-          email,
-          photoURL,
-          ...additionalData
-        });
-      } catch (error) {
-        console.error("Error creating user document", error);
-      }
+        const {email, displayName, photoURL} = user;
+        try {
+            await userRef.set({
+                displayName,
+                email,
+                photoURL,
+                ...additionalData,
+            });
+        } catch (error) {
+            console.error('Error creating user document', error);
+        }
     }
     return getUserDocument(user.uid);
-  };
-  const getUserDocument = async uid => {
+};
+const getUserDocument = async (uid) => {
     if (!uid) return null;
     try {
-      const userDocument = await firestore.doc(`users/${uid}`).get();
-      return {
-        uid,
-        ...userDocument.data()
-      };
+        const userDocument = await firestore.doc(`users/${uid}`).get();
+        return {
+            uid,
+            ...userDocument.data(),
+        };
     } catch (error) {
-      console.error("Error fetching user", error);
+        console.error('Error fetching user', error);
     }
-  };
+};
+export const getLocations = async () => {
+    try {
+        const locationSnapshot = await firestore.collection('locations').get();
+        return locationSnapshot.docs.map((doc) => doc.data());
+    } catch (error) {
+        console.error('error fetching locations', error);
+    }
+};

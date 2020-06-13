@@ -1,25 +1,51 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
-
+import Locations from './Locations';
+import Map from './map-utils/MapContainer';
 import {auth} from 'firebase-utils';
+import {MapsWrapper} from './styles';
+import AddLocation from './AddLocation';
 
 const Home = () => {
+    const [show, setShow] = useState(false);
+
     const handleSignout = () => {
         auth.signOut();
-        localStorage.setItem('isLoggedIn', false)
-    }
+        localStorage.setItem('isLoggedIn', false);
+    };
+
+    const handleShowModal = () => setShow(true);
+
     return (
-        <div>
+        <>
             <Navbar bg='primary' variant='dark'>
-                <Navbar.Brand href='#home'>Favourite Locations</Navbar.Brand>
+                <Navbar.Brand>Favourite Locations</Navbar.Brand>
                 <Nav className='mr-auto' />
                 <Button variant='outline-light' onClick={handleSignout}>
                     Sign out
                 </Button>
             </Navbar>
-        </div>
+            <div className='p-3'>
+                <ul className='nav justify-content-end'>
+                    <li className='nav-item'>
+                        <Button variant='primary' onClick={handleShowModal}>
+                            Add Location
+                        </Button>
+                    </li>
+                </ul>
+                <hr />
+                <div className='d-flex'>
+                    <Locations />
+                    <MapsWrapper>
+                        <Map />
+                    </MapsWrapper>
+                </div>
+            </div>
+
+            <AddLocation show={show} onHide={() => setShow(false)} />
+        </>
     );
 };
 

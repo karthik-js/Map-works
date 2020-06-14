@@ -1,4 +1,4 @@
-import React, {useState, memo} from 'react';
+import React, {useState, useEffect, useRef, memo} from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
@@ -8,10 +8,27 @@ import {auth} from 'firebase-utils';
 import {MapsWrapper} from './styles';
 import AddLocation from './AddLocation';
 import usePosition from 'providers/UsePosition';
+import {getLocations} from 'firebase-utils';
 
 const Home = () => {
     const currPos = usePosition();
+    const [locations, setLocations] = useState([]);
     const [show, setShow] = useState(false);
+    const [selected, setSelected] = useState(null);
+
+    useEffect(() => {
+        loadLocations();
+    }, []);
+
+    const loadLocations = async () => {
+        const loc = await getLocations();
+        setLocations(
+            loc.map((location) => ({
+                ...location,
+                active: false,
+            }))
+        );
+    };
 
     const handleSignout = () => {
         auth.signOut();
@@ -39,9 +56,18 @@ const Home = () => {
                 </ul>
                 <hr />
                 <div className='d-flex'>
-                    <Locations />
+                    <Locations
+                        locations={locations}
+                        loadLocations={loadLocations}
+                        setSelected={setSelected}
+                    />
                     <MapsWrapper>
-                        <Map currPos={currPos} height='450px' />
+                        <Map
+                            currPos={currPos}
+                            markers={locations}
+                            height='450px'
+                            favLocation={selected}
+                        />
                     </MapsWrapper>
                 </div>
             </div>
